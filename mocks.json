@@ -1,0 +1,22 @@
+{
+  "GET /api/health": {
+    "status": 200,
+    "body": { "ok": true }
+  },
+  "GET /api/users": {
+    "status": 200,
+    "body": [
+      { "id": 1, "name": "Ada Lovelace" },
+      { "id": 2, "name": "Alan Turing" }
+    ]
+  },
+  "GET /api/users/:id": {
+    "status": 200,
+    "body": { "id": ":id", "name": "Dynamic User" }
+  },
+  "POST /api/users": {
+    "status": 201,
+    "delay": 300,
+    "body": { "id": 99, "created": true }
+  }
+}
