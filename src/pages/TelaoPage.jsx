@@ -156,9 +156,14 @@ export default function TelaoPage() {
                     className="bg-slate-900/50 border border-slate-850 rounded-2xl p-4 shadow-sm animate-fade-in"
                   >
                     <div className="flex justify-between items-center mb-2">
-                      <span className="font-bold text-xs text-violet-300">
-                        👤 {c.aluno}
-                      </span>
+                      <div className="min-w-0">
+                        <span className="font-bold text-xs text-violet-300 truncate">
+                          👤 {c.aluno || 'Aluno Anônimo'}
+                        </span>
+                        {c.turma && (
+                          <div className="text-[10px] text-slate-500 truncate">{c.turma}</div>
+                        )}
+                      </div>
                       <span className="text-[9px] text-slate-500 font-semibold">
                         {new Date(c.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
