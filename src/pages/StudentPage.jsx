@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useSearchParams, Link } from 'react-router-dom';
+import { useParams, useSearchParams, Link, useNavigate } from 'react-router-dom';
 import { getPhotoById } from '../services/photosService';
 import { addFrase } from '../services/frasesService';
 import { MessageSquare, User, Send, CheckCircle, ArrowLeft, Loader2 } from 'lucide-react';
@@ -8,6 +8,7 @@ export default function StudentPage() {
   const { fotoId } = useParams();
   const [searchParams] = useSearchParams();
   const [nome, setNome] = useState('');
+  const [turma, setTurma] = useState('');
   const [texto, setTexto] = useState('');
   const [foto, setFoto] = useState(null);
   
@@ -16,6 +17,8 @@ export default function StudentPage() {
   const [submitting, setSubmitting] = useState(false);
   const [enviado, setEnviado] = useState(false);
   const [error, setError] = useState('');
+  const [redirectSeconds, setRedirectSeconds] = useState(4);
+  const navigate = useNavigate();
 
   // Fallback img URL from query search
   const fallbackImgUrl = searchParams.get('img');
@@ -46,9 +49,10 @@ export default function StudentPage() {
     setError('');
 
     try {
-      await addFrase(fotoId, nome, texto);
+      await addFrase(fotoId, nome, texto, turma);
       setEnviado(true);
       setTexto('');
+      setTurma('');
     } catch (err) {
       console.error(err);
       setError('Houve um erro ao enviar seu comentário. Tente novamente.');
@@ -56,6 +60,23 @@ export default function StudentPage() {
       setSubmitting(false);
     }
   };
+
+  // When a message is sent, start auto-redirect countdown
+  useEffect(() => {
+    if (!enviado) return;
+    setRedirectSeconds(4);
+    const interval = setInterval(() => {
+      setRedirectSeconds((s) => {
+        if (s <= 1) {
+          clearInterval(interval);
+          navigate('/');
+          return 0;
+        }
+        return s - 1;
+      });
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [enviado, navigate]);
 
   return (
     <div className="min-h-[85vh] flex items-center justify-center p-4">
@@ -104,24 +125,18 @@ export default function StudentPage() {
                 <div className="w-16 h-16 rounded-full bg-emerald-500/15 border border-emerald-500/30 flex items-center justify-center text-emerald-400 mx-auto mb-5 shadow-lg shadow-emerald-500/10">
                   <CheckCircle size={32} />
                 </div>
-                <h3 className="text-lg font-black text-slate-100">Mensagem Enviada!</h3>
+                <h3 className="text-lg font-black text-slate-100">Obrigado — comentário enviado</h3>
                 <p className="text-xs text-slate-400 mt-2 max-w-[250px] mx-auto leading-relaxed">
-                  Parabéns! Sua opinião foi enviada e agora aparecerá no telão interativo da exposição.
+                  Sua opinião foi registrada. Você será redirecionado à galeria em <strong className="text-slate-100">{redirectSeconds}s</strong>.
                 </p>
-                
+
                 <div className="flex flex-col gap-2 mt-8">
                   <button
-                    onClick={() => setEnviado(false)}
-                    className="w-full py-2.5 bg-slate-800 hover:bg-slate-750 text-slate-200 font-bold rounded-xl text-xs transition cursor-pointer"
+                    onClick={() => navigate('/')}
+                    className="w-full py-2.5 bg-violet-600 hover:bg-violet-500 text-white font-bold rounded-xl text-xs transition cursor-pointer"
                   >
-                    Escrever outro comentário
+                    Voltar agora para a Galeria
                   </button>
-                  <Link
-                    to="/"
-                    className="w-full py-2.5 border border-slate-800 text-slate-400 hover:text-slate-200 text-xs font-bold rounded-xl text-center transition"
-                  >
-                    Explorar outras obras
-                  </Link>
                 </div>
               </div>
             ) : (
@@ -138,6 +153,19 @@ export default function StudentPage() {
                     value={nome}
                     onChange={(e) => setNome(e.target.value)}
                     required
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[10px] font-extrabold text-slate-400 uppercase tracking-widest mb-2">
+                    Turma (Opcional)
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Ex: 8ºA, 2º ano, Turma B"
+                    className="w-full bg-slate-950 border border-slate-800 focus:border-violet-500 rounded-xl px-4 py-3 text-slate-150 text-sm focus:outline-none transition-all"
+                    value={turma}
+                    onChange={(e) => setTurma(e.target.value)}
                   />
                 </div>
 

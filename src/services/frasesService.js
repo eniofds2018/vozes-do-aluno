@@ -21,21 +21,23 @@ export const getFrasesByPhotoId = async (fotoId) => {
   return data || [];
 };
 
-export const addFrase = async (fotoId, aluno, texto) => {
+export const addFrase = async (fotoId, aluno, texto, turma = '') => {
   if (!aluno.trim() || !texto.trim()) {
     throw new Error('Nome e frase são campos obrigatórios.');
   }
 
+  const payload = {
+    foto_id: fotoId,
+    aluno,
+    texto,
+    created_at: new Date().toISOString()
+  };
+
+  if (turma && turma.trim()) payload.turma = turma.trim();
+
   const { data, error } = await supabase
     .from('comentarios')
-    .insert([
-      {
-        foto_id: fotoId,
-        aluno,
-        texto,
-        created_at: new Date().toISOString()
-      }
-    ]);
+    .insert([payload]);
 
   if (error) throw error;
   return data;

@@ -54,14 +54,16 @@ export default function UploadPhotoForm({ editFoto = null, onSuccess, onCancel }
     setError('');
 
     try {
+      let result = null;
       if (editFoto) {
         // Edit mode
-        await updatePhoto(editFoto.id, { titulo, description, category, image_url: editFoto.image_url }, file);
+        result = await updatePhoto(editFoto.id, { titulo, description, category, image_url: editFoto.image_url }, file);
       } else {
         // Add mode
-        await uploadPhoto(titulo, description, category, file);
+        result = await uploadPhoto(titulo, description, category, file);
       }
-      onSuccess();
+      // Pass result to parent so it can show a confirmation if desired
+      onSuccess(result);
     } catch (err) {
       console.error(err);
       setError('Ocorreu um erro ao salvar a obra: ' + err.message);

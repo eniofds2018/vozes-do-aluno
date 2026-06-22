@@ -45,9 +45,14 @@ export default function MessageCard({ message, onDelete, isAdmin = false }) {
       {/* BODY CONTENT */}
       <div className="flex-grow min-w-0 pr-6">
         <div className="flex items-baseline justify-between flex-wrap gap-x-2">
-          <span className="font-bold text-sm text-slate-100 truncate">
-            {message.aluno || 'Aluno Anônimo'}
-          </span>
+          <div className="min-w-0">
+            <span className="font-bold text-sm text-slate-100 truncate">
+              {message.aluno || 'Aluno Anônimo'}
+            </span>
+            {message.turma && (
+              <div className="text-[10px] text-slate-500 font-medium truncate mt-0.5">{message.turma}</div>
+            )}
+          </div>
           <span className="text-[10px] text-slate-500 font-medium flex items-center gap-1">
             <Clock size={10} />
             {formattedDate} {formattedTime}
