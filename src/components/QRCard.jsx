@@ -3,8 +3,8 @@ import { QRCodeSVG } from 'qrcode.react';
 import { Sparkles, Printer } from 'lucide-react';
 
 export default function QRCard({ foto, siteUrl }) {
-  // Use hash routing to ensure direct navigation from QR works on static hosts
-  const targetUrl = `${siteUrl}/#/foto/${foto.id}?img=${encodeURIComponent(foto.image_url)}`;
+  // Since we use BrowserRouter and have vercel.json rewrites, we navigate directly to the path
+  const targetUrl = `${siteUrl}/foto/${foto.id}?img=${encodeURIComponent(foto.image_url)}`;
 
   return (
     <div className="bg-white text-slate-900 p-6 rounded-2xl border-2 border-dashed border-slate-200 shadow-lg flex flex-col items-center text-center relative print:break-inside-avoid print:shadow-none print:border-slate-350 max-w-sm mx-auto">
